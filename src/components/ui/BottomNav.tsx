@@ -42,7 +42,7 @@ export default function BottomNav() {
 
   return (
     <nav 
-      className="fixed bottom-0 left-0 z-40 w-full border-t border-white/10 bg-dark-green/95 backdrop-blur-md md:hidden"
+      className="fixed bottom-0 left-0 z-40 w-full border-t border-white/5 bg-dark-green/60 backdrop-blur-md md:hidden"
       onTouchStart={handleTouchStart}
     >
       <div className="flex h-16 items-center justify-around px-2">
