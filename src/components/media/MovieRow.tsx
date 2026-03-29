@@ -64,7 +64,7 @@ export default function MovieRow({ title, items, onOpenModal }: MovieRowProps) {
         <div
           ref={rowRef}
           onScroll={updateScrollState}
-          className="no-scrollbar flex gap-2 overflow-x-auto scroll-smooth px-6 pb-16 md:gap-3 md:px-12"
+          className="no-scrollbar relative z-10 flex gap-2 overflow-x-auto scroll-smooth px-6 pb-16 md:gap-3 md:px-12"
         >
           {items.map((item, index) => (
             <MediaCard key={item.id} item={item} index={index} onOpenModal={onOpenModal} />
