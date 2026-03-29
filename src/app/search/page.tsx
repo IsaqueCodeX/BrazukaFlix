@@ -22,16 +22,19 @@ export default function SearchPage() {
   const [filteredItems, setFilteredItems] = useState<MediaItem[]>([]);
   const [modalItem, setModalItem] = useState<MediaItem | null>(null);
   const [mounted, setMounted] = useState(false);
+  const [isLoadingData, setIsLoadingData] = useState(true);
 
   useEffect(() => {
     setMounted(true);
-    getAllCategories().then((cats) => {
-      const items = Array.from(
-        new Map(cats.flatMap((c) => c.items).map((i) => [i.id, i])).values()
-      );
-      setAllItems(items);
-      setFilteredItems(items);
-    });
+    getAllCategories()
+      .then((cats) => {
+        const items = Array.from(
+          new Map(cats.flatMap((c) => c.items).map((i) => [i.id, i])).values()
+        );
+        setAllItems(items);
+        setFilteredItems(items);
+      })
+      .finally(() => setIsLoadingData(false));
   }, []);
 
   useEffect(() => {
@@ -103,7 +106,11 @@ export default function SearchPage() {
           />
         </div>
 
-        {filteredItems.length > 0 ? (
+        {isLoadingData ? (
+          <div className="flex items-center justify-center py-12">
+            <div className="h-8 w-8 animate-spin rounded-full border-2 border-dark-green border-t-transparent" />
+          </div>
+        ) : filteredItems.length > 0 ? (
           <div className="grid grid-cols-2 gap-x-4 gap-y-10 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 mb-16">
             {filteredItems.map((item, i) => (
               <MediaCard key={item.id} item={item} index={i} isGrid onOpenModal={setModalItem} />
