@@ -15,6 +15,7 @@ import MovieRow from '@/components/media/MovieRow';
 import Footer from '@/components/layout/Footer';
 import MediaCard from '@/components/media/MediaCard';
 import MediaModal from '@/components/media/MediaModal';
+import BottomNav from '@/components/ui/BottomNav';
 
 interface BrowseClientProps {
   categories: MediaCategory[];
@@ -200,6 +201,8 @@ export default function BrowseClient({
       </AnimatePresence>
 
       {!hideBillboard && <Footer />}
+
+      <BottomNav />
 
       {/* Modal de detalhes */}
       <AnimatePresence>

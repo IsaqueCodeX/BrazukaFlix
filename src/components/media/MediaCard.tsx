@@ -4,7 +4,7 @@
 // Zoom + glow amarelo + overlay com informações detalhadas
 // Versão otimizada para mobile: toque abre modal diretamente
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { Plus, ChevronDown, Check, PlayCircle, Trophy } from 'lucide-react';
@@ -23,6 +23,7 @@ interface MediaCardProps {
 export default function MediaCard({ item, index = 0, isGrid = false, onOpenModal }: MediaCardProps) {
   const [imgLoaded, setImgLoaded] = useState(false);
   const { hasItem, toggleItem } = useMyList();
+  const touchStartRef = useRef<{ x: number; y: number } | null>(null);
   
   const inMyList = hasItem(item.id);
 
@@ -30,9 +31,24 @@ export default function MediaCard({ item, index = 0, isGrid = false, onOpenModal
     onOpenModal?.(item);
   }, [onOpenModal, item]);
 
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    const touch = e.touches[0];
+    touchStartRef.current = { x: touch.clientX, y: touch.clientY };
+  }, []);
+
   const handleTouchEnd = useCallback((e: React.TouchEvent) => {
-    e.preventDefault();
-    onOpenModal?.(item);
+    if (!touchStartRef.current) return;
+    
+    const touch = e.changedTouches[0];
+    const deltaX = Math.abs(touch.clientX - touchStartRef.current.x);
+    const deltaY = Math.abs(touch.clientY - touchStartRef.current.y);
+    
+    if (deltaX < 10 && deltaY < 10) {
+      e.preventDefault();
+      onOpenModal?.(item);
+    }
+    
+    touchStartRef.current = null;
   }, [onOpenModal, item]);
 
   return (
@@ -46,6 +62,7 @@ export default function MediaCard({ item, index = 0, isGrid = false, onOpenModal
       style={{ zIndex: 1 }}
       aria-label={`${item.title} (${item.year})`}
       onClick={handleCardClick}
+      onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
       role="button"
       tabIndex={0}
