@@ -42,7 +42,7 @@ export default function ProfilePage() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="min-h-screen bg-navy-deep pb-20"
+      className="min-h-screen bg-navy-deep pb-24"
     >
       <motion.div
         initial={{ opacity: 0, y: 20 }}

@@ -10,6 +10,7 @@ import Billboard from '@/components/hero/Billboard';
 import Footer from '@/components/layout/Footer';
 import MediaCard from '@/components/media/MediaCard';
 import MediaModal from '@/components/media/MediaModal';
+import BottomNav from '@/components/ui/BottomNav';
 
 interface BrowseCategoryClientProps {
   title: string;
@@ -57,7 +58,7 @@ export default function BrowseCategoryClient({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="min-h-screen bg-navy-deep pb-20"
+      className="min-h-screen bg-navy-deep pb-24"
     >
       <Navbar
         profileName={selectedProfile.name}
@@ -98,6 +99,8 @@ export default function BrowseCategoryClient({
       </motion.div>
 
       <Footer />
+
+      <BottomNav />
 
       <AnimatePresence>
         {modalItem && (
