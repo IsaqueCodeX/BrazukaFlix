@@ -21,7 +21,7 @@
  * - Animações com Framer Motion
  */
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
@@ -67,6 +67,25 @@ export default function MediaModal({ item, onClose, onOpenModal }: MediaModalPro
   const [isMuted, setIsMuted] = useState(true);
   const [showTrailer, setShowTrailer] = useState(false);
   const [mounted, setMounted] = useState(false);
+
+  // Ref para tracking de touch no botão fechar e overlay
+  const touchStartRef = useRef<{ x: number; y: number } | null>(null);
+
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    const touch = e.touches[0];
+    touchStartRef.current = { x: touch.clientX, y: touch.clientY };
+  }, []);
+
+  const handleTouchEnd = useCallback((e: React.TouchEvent, callback: () => void) => {
+    if (!touchStartRef.current) return;
+    const touch = e.changedTouches[0];
+    const deltaX = Math.abs(touch.clientX - touchStartRef.current.x);
+    const deltaY = Math.abs(touch.clientY - touchStartRef.current.y);
+    if (deltaX < 10 && deltaY < 10) {
+      callback();
+    }
+    touchStartRef.current = null;
+  }, []);
 
   // ============================================
   // HOOKS DE CICLO DE VIDA
@@ -166,8 +185,10 @@ export default function MediaModal({ item, onClose, onOpenModal }: MediaModalPro
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.2 }}
-        className="fixed inset-0 z-[51] bg-black/80 backdrop-blur-sm"
+        className="fixed inset-0 z-[51] bg-black/80 backdrop-blur-sm touch-manipulation"
         onClick={onClose}
+        onTouchStart={handleTouchStart}
+        onTouchEnd={(e) => handleTouchEnd(e, onClose)}
       />
 
       {/* ============================================
@@ -194,7 +215,9 @@ export default function MediaModal({ item, onClose, onOpenModal }: MediaModalPro
             ============================================ */}
             <button
               onClick={onClose}
-              className="absolute top-3 right-3 z-40 flex h-9 w-9 items-center justify-center rounded-full bg-[#181818] text-white shadow-xl ring-1 ring-white/10 transition-all hover:scale-110 hover:bg-[#282828]"
+              onTouchStart={handleTouchStart}
+              onTouchEnd={(e) => handleTouchEnd(e, onClose)}
+              className="absolute top-3 right-3 z-40 flex h-9 w-9 items-center justify-center rounded-full bg-[#181818] text-white shadow-xl ring-1 ring-white/10 transition-all hover:scale-110 hover:bg-[#282828] touch-manipulation"
               aria-label="Fechar"
             >
               <X size={17} strokeWidth={2.5} />
