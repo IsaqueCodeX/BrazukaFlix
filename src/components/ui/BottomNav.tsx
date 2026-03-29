@@ -2,17 +2,22 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { Home, Search, Play, User } from 'lucide-react';
-import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
 export default function BottomNav() {
-  const pathname = usePathname();
   const router = useRouter();
   const [isVisible, setIsVisible] = useState(false);
   const [lastScrollY, setLastScrollY] = useState(0);
   const [touchStart, setTouchStart] = useState<{ x: number; y: number } | null>(null);
 
-  const isActive = (path: string) => pathname === path;
+  const currentPath = typeof window !== 'undefined' ? window.location.pathname : '';
+
+  const isActive = (path: string) => {
+    if (path === '/browse' || path === '/') {
+      return currentPath === '/browse' || currentPath === '/';
+    }
+    return currentPath === path;
+  };
 
   const handleScroll = useCallback(() => {
     const currentScrollY = window.scrollY;
@@ -46,53 +51,33 @@ export default function BottomNav() {
     setTouchStart(null);
   };
 
+  const navItems = [
+    { icon: Home, label: 'Início', href: '/browse', active: isActive('/browse') },
+    { icon: Search, label: 'Buscar', href: '/search', active: isActive('/search') },
+    { icon: Play, label: 'Minha Lista', href: '/my-list', active: isActive('/my-list') },
+    { icon: User, label: 'Perfil', href: '/profile', active: isActive('/profile') },
+  ];
+
   return (
     <nav 
-      className={`fixed bottom-0 left-0 z-40 w-full border-t border-white/10 bg-black/80 backdrop-blur-md transition-transform duration-300 md:hidden ${
+      className={`fixed bottom-0 left-0 z-40 w-full border-t border-white/10 bg-dark-green/95 backdrop-blur-md transition-transform duration-300 md:hidden ${
         isVisible ? 'translate-y-0' : 'translate-y-full'
       }`}
       onTouchStart={handleTouchStart}
     >
-      <div className="flex h-16 items-center justify-around">
-        <div
-          className={`flex flex-col items-center justify-center gap-1 p-2 touch-manipulation ${
-            isActive('/browse') ? 'text-accent-yellow' : 'text-white/60'
-          }`}
-          onTouchEnd={(e) => handleTouchEnd(e, '/browse')}
-        >
-          <Home size={22} strokeWidth={isActive('/browse') ? 2.5 : 2} />
-          <span className="text-[10px] font-medium">Início</span>
-        </div>
-
-        <div
-          className={`flex flex-col items-center justify-center gap-1 p-2 touch-manipulation ${
-            isActive('/search') ? 'text-accent-yellow' : 'text-white/60'
-          }`}
-          onTouchEnd={(e) => handleTouchEnd(e, '/search')}
-        >
-          <Search size={22} strokeWidth={isActive('/search') ? 2.5 : 2} />
-          <span className="text-[10px] font-medium">Buscar</span>
-        </div>
-
-        <div
-          className={`flex flex-col items-center justify-center gap-1 p-2 touch-manipulation ${
-            isActive('/my-list') ? 'text-accent-yellow' : 'text-white/60'
-          }`}
-          onTouchEnd={(e) => handleTouchEnd(e, '/my-list')}
-        >
-          <Play size={22} strokeWidth={isActive('/my-list') ? 2.5 : 2} />
-          <span className="text-[10px] font-medium">Minha Lista</span>
-        </div>
-
-        <div
-          className={`flex flex-col items-center justify-center gap-1 p-2 touch-manipulation ${
-            isActive('/profile') ? 'text-accent-yellow' : 'text-white/60'
-          }`}
-          onTouchEnd={(e) => handleTouchEnd(e, '/profile')}
-        >
-          <User size={22} strokeWidth={isActive('/profile') ? 2.5 : 2} />
-          <span className="text-[10px] font-medium">Perfil</span>
-        </div>
+      <div className="flex h-16 items-center justify-around px-2">
+        {navItems.map((item) => (
+          <div
+            key={item.href}
+            className={`flex flex-col items-center justify-center gap-0.5 touch-manipulation py-2 px-3 ${
+              item.active ? 'text-accent-yellow' : 'text-white/70'
+            }`}
+            onTouchEnd={(e) => handleTouchEnd(e, item.href)}
+          >
+            <item.icon size={22} strokeWidth={item.active ? 2.5 : 2} />
+            <span className="text-[10px] font-medium whitespace-nowrap">{item.label}</span>
+          </div>
+        ))}
       </div>
     </nav>
   );
