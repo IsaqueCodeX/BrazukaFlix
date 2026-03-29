@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 
 export default function BottomNav() {
   const router = useRouter();
+  const [isVisible, setIsVisible] = useState(false);
   const [touchStart, setTouchStart] = useState<{ x: number; y: number } | null>(null);
 
   const currentPath = typeof window !== 'undefined' ? window.location.pathname : '';
@@ -16,6 +17,17 @@ export default function BottomNav() {
     }
     return currentPath === path;
   };
+
+  const handleScroll = useCallback(() => {
+    const currentScrollY = window.scrollY;
+    setIsVisible(currentScrollY > 300);
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [handleScroll]);
 
   const handleTouchStart = (e: React.TouchEvent) => {
     setTouchStart({ x: e.touches[0].clientX, y: e.touches[0].clientY });
@@ -42,7 +54,9 @@ export default function BottomNav() {
 
   return (
     <nav 
-      className="fixed bottom-0 left-0 z-40 w-full border-t border-white/5 bg-dark-green/60 backdrop-blur-md md:hidden"
+      className={`fixed bottom-0 left-0 z-40 w-full border-t border-white/5 bg-dark-green/60 backdrop-blur-md transition-transform duration-300 md:hidden ${
+        isVisible ? 'translate-y-0' : 'translate-y-full'
+      }`}
       onTouchStart={handleTouchStart}
     >
       <div className="flex h-16 items-center justify-around px-2">
