@@ -36,6 +36,8 @@ interface NavbarProps {
   onSwitchProfile: () => void;
   /** Callback para busca de conteúdo */
   onSearch: (term: string) => void;
+  /** Abre a busca automaticamente (usado no mobile) */
+  autoOpenSearch?: boolean;
 }
 
 // ============================================
@@ -60,6 +62,7 @@ export default function Navbar({
   profileAvatar,
   onSwitchProfile,
   onSearch,
+  autoOpenSearch = false,
 }: NavbarProps) {
   // Estados para controle de UI
   const [isScrolled, setIsScrolled] = useState(false);
@@ -96,6 +99,12 @@ export default function Navbar({
       searchInputRef.current.focus();
     }
   }, [isSearchOpen]);
+
+  useEffect(() => {
+    if (autoOpenSearch && !isSearchOpen) {
+      setIsSearchOpen(true);
+    }
+  }, [autoOpenSearch, isSearchOpen]);
 
   /**
    * Handler para mudança no input de busca.

@@ -46,6 +46,7 @@ export default function BrowseClient({
   const [mounted, setMounted] = useState(false);
   
   const [urlParams, setUrlParams] = useState<{ type?: string; list?: string }>({});
+  const [isMobile, setIsMobile] = useState(false);
   
   useEffect(() => {
     setMounted(true);
@@ -58,6 +59,7 @@ export default function BrowseClient({
         type: params.get('type') || undefined,
         list: params.get('list') || undefined,
       });
+      setIsMobile(window.innerWidth < 768);
     }
   }, []);
 
@@ -146,6 +148,7 @@ export default function BrowseClient({
         profileAvatar={selectedProfile.avatar}
         onSwitchProfile={handleSwitchProfile}
         onSearch={setSearchTerm}
+        autoOpenSearch={isMobile}
       />
 
       <AnimatePresence mode="wait">

@@ -2,11 +2,12 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { Home, Search, Play, User } from 'lucide-react';
-import { useRouter, usePathname } from 'next/navigation';
+import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 
 export default function BottomNav() {
   const router = useRouter();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [isVisible, setIsVisible] = useState(false);
   const [touchStart, setTouchStart] = useState<{ x: number; y: number } | null>(null);
 
@@ -58,7 +59,7 @@ export default function BottomNav() {
 
   const navItems = [
     { icon: Home, label: 'Início', href: '/browse', active: isActive('/browse') },
-    { icon: Search, label: 'Buscar', href: '/search', active: isActive('/search') },
+    { icon: Search, label: 'Buscar', href: '/browse', active: isActive('/browse') },
     { icon: Play, label: 'Minha Lista', href: '/my-list', active: isActive('/my-list') },
     { icon: User, label: 'Perfil', href: '/profile', active: isActive('/profile') },
   ];
