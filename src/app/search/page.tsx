@@ -119,11 +119,13 @@ export default function SearchPage() {
 
       <BottomNav />
 
-      <MediaModal
-        item={modalItem!}
-        onClose={() => setModalItem(null)}
-        onOpenModal={setModalItem}
-      />
+      {modalItem && (
+        <MediaModal
+          item={modalItem}
+          onClose={() => setModalItem(null)}
+          onOpenModal={setModalItem}
+        />
+      )}
     </motion.main>
   );
 }
