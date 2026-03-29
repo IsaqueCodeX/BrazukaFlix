@@ -6,8 +6,6 @@ import { useRouter } from 'next/navigation';
 
 export default function BottomNav() {
   const router = useRouter();
-  const [isVisible, setIsVisible] = useState(false);
-  const [lastScrollY, setLastScrollY] = useState(0);
   const [touchStart, setTouchStart] = useState<{ x: number; y: number } | null>(null);
 
   const currentPath = typeof window !== 'undefined' ? window.location.pathname : '';
@@ -18,22 +16,6 @@ export default function BottomNav() {
     }
     return currentPath === path;
   };
-
-  const handleScroll = useCallback(() => {
-    const currentScrollY = window.scrollY;
-    const scrollHeight = document.documentElement.scrollHeight;
-    const clientHeight = window.innerHeight;
-    const isAtBottom = currentScrollY + clientHeight >= scrollHeight - 50;
-    
-    setIsVisible(isAtBottom);
-    setLastScrollY(currentScrollY);
-  }, []);
-
-  useEffect(() => {
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll();
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [handleScroll]);
 
   const handleTouchStart = (e: React.TouchEvent) => {
     setTouchStart({ x: e.touches[0].clientX, y: e.touches[0].clientY });
@@ -60,9 +42,7 @@ export default function BottomNav() {
 
   return (
     <nav 
-      className={`fixed bottom-0 left-0 z-40 w-full border-t border-white/10 bg-dark-green/95 backdrop-blur-md transition-transform duration-300 md:hidden ${
-        isVisible ? 'translate-y-0' : 'translate-y-full'
-      }`}
+      className="fixed bottom-0 left-0 z-40 w-full border-t border-white/10 bg-dark-green/95 backdrop-blur-md md:hidden"
       onTouchStart={handleTouchStart}
     >
       <div className="flex h-16 items-center justify-around px-2">
@@ -72,6 +52,7 @@ export default function BottomNav() {
             className={`flex flex-col items-center justify-center gap-0.5 touch-manipulation py-2 px-3 ${
               item.active ? 'text-accent-yellow' : 'text-white/70'
             }`}
+            onClick={() => router.push(item.href)}
             onTouchEnd={(e) => handleTouchEnd(e, item.href)}
           >
             <item.icon size={22} strokeWidth={item.active ? 2.5 : 2} />
