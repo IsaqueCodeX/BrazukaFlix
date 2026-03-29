@@ -49,3 +49,9 @@ logs
 .agent/
 .cursor/
 
+# TypeScript build info
+tsconfig.tsbuildinfo
+
+# Local assets (if not needed in repo)
+assets/
+
